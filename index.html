@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Gallery</title>
+    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <!-- HUD -->
+        <div id="hud">
+            <div class="hud-item">
+                <span class="hud-label">PUNTOS</span>
+                <span id="score" class="hud-value">0</span>
+            </div>
+            <div class="hud-item hud-center">
+                <span class="hud-label">TIEMPO</span>
+                <span id="timer" class="hud-value timer-value">60</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">COMBO</span>
+                <span id="combo" class="hud-value combo-value">x1</span>
+            </div>
+        </div>
+
+        <!-- Game area -->
+        <div id="game-area">
+            <div id="grid-bg"></div>
+        </div>
+
+        <!-- Start screen -->
+        <div id="start-screen" class="overlay">
+            <div class="overlay-content">
+                <h1 class="game-title">SHOOTING<br>GALLERY</h1>
+                <p class="game-subtitle">Dispara a los objetivos antes de que desaparezcan</p>
+                <div class="instructions">
+                    <div class="instruction-item">
+                        <span class="instruction-icon">🎯</span>
+                        <span>Haz clic en los objetivos para sumar puntos</span>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">⚡</span>
+                        <span>Encadena aciertos para multiplicar tu puntuación</span>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">❌</span>
+                        <span>¡No falles o perderás tu combo!</span>
+                    </div>
+                </div>
+                <button id="start-btn" class="btn-primary">INICIAR JUEGO</button>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div id="countdown-screen" class="overlay hidden">
+            <span id="countdown-number" class="countdown-text">3</span>
+        </div>
+
+        <!-- End screen -->
+        <div id="end-screen" class="overlay hidden">
+            <div class="overlay-content">
+                <h1 class="end-title">¡TIEMPO!</h1>
+                <div id="final-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Puntuación Final</span>
+                        <span id="final-score" class="stat-value stat-highlight">0</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-row">
+                        <span class="stat-label">Aciertos</span>
+                        <span id="final-hits" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Fallos</span>
+                        <span id="final-misses" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Precisión</span>
+                        <span id="final-accuracy" class="stat-value">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Mejor Combo</span>
+                        <span id="final-combo" class="stat-value">x1</span>
+                    </div>
+                </div>
+                <button id="restart-btn" class="btn-primary">REINICIAR</button>
+            </div>
+        </div>
+
+        <!-- Custom crosshair -->
+        <div id="crosshair">
+            <div class="ch-h"></div>
+            <div class="ch-v"></div>
+            <div class="ch-dot"></div>
+        </div>
+    </div>
+
+    <script src="script.js?v=3"></script>
+</body>
+</html>

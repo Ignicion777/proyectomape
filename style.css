@@ -1,0 +1,675 @@
+/* ========== RESET & BASE ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    overflow: hidden;
+    background: #080810;
+    font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    cursor: none;
+    width: 100vw;
+    height: 100vh;
+}
+
+#game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 40, 40, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 100%, rgba(255, 40, 40, 0.04) 0%, transparent 50%),
+        #080810;
+}
+
+/* ========== HUD ========== */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    background: rgba(8, 8, 16, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 60, 60, 0.3);
+    z-index: 100;
+}
+
+.hud-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+}
+
+.hud-center {
+    position: relative;
+}
+
+.hud-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 3px;
+    margin-bottom: 2px;
+}
+
+.hud-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.timer-value {
+    color: #ff3c3c;
+    text-shadow: 0 0 15px rgba(255, 60, 60, 0.4);
+}
+
+.timer-value.warning {
+    animation: timerPulse 0.5s ease-in-out infinite;
+}
+
+.combo-value {
+    color: #ffaa00;
+    text-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+    transition: transform 0.15s ease;
+}
+
+.combo-value.bump {
+    transform: scale(1.3);
+}
+
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* ========== GAME AREA ========== */
+#game-area {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+/* Subtle grid background */
+#grid-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(rgba(255, 60, 60, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 60, 60, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+/* Vignette */
+#game-area::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ========== TARGETS ========== */
+.target {
+    position: absolute;
+    border-radius: 50%;
+    cursor: none;
+    z-index: 10;
+    animation: targetAppear 0.25s ease-out forwards;
+}
+
+@keyframes targetAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.target:hover {
+    filter: brightness(1.2);
+}
+
+/* Target rings - classic bullseye */
+.target-canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.t-ring {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.t-ring-1 {
+    width: 100%;
+    height: 100%;
+    background: #cc2020;
+    box-shadow:
+        0 0 15px rgba(255, 40, 40, 0.3),
+        inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.t-ring-2 {
+    width: 75%;
+    height: 75%;
+    background: #f0f0f0;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.t-ring-3 {
+    width: 50%;
+    height: 50%;
+    background: #cc2020;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.t-ring-4 {
+    width: 25%;
+    height: 25%;
+    background: #f0f0f0;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.t-center {
+    width: 10%;
+    height: 10%;
+    background: #ff3030;
+    box-shadow: 0 0 8px rgba(255, 48, 48, 0.6);
+}
+
+/* Target glow ring */
+.target::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 60, 60, 0.4);
+    animation: ringPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* Desaparición sencilla y limpia */
+.target.despawning {
+    pointer-events: none;
+    animation: targetDisappear 0.25s ease-in forwards;
+}
+
+@keyframes targetDisappear {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+/* Expired: hide instantly */
+.target.expired {
+    display: none;
+    pointer-events: none;
+}
+
+/* Fragmentos de diana rota */
+.shatter-piece {
+    position: absolute;
+    pointer-events: none;
+    z-index: 20;
+    will-change: transform, opacity;
+}
+
+.shatter-shard {
+    position: absolute;
+    pointer-events: none;
+    z-index: 21;
+}
+
+/* ========== HIT EFFECT ========== */
+.hit-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 15;
+    border-radius: 50%;
+    border: 3px solid #ffaa00;
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+    animation: hitBurst 0.45s ease-out forwards;
+}
+
+@keyframes hitBurst {
+    from {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Particle fragments on hit */
+.hit-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffaa00;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 15;
+    box-shadow: 0 0 6px rgba(255, 170, 0, 0.8);
+}
+
+/* ========== SCORE POPUP ========== */
+.score-popup {
+    position: absolute;
+    pointer-events: none;
+    z-index: 20;
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffcc00;
+    text-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
+    animation: scoreFloat 0.9s ease-out forwards;
+    white-space: nowrap;
+}
+
+.score-popup.big-score {
+    font-size: 24px;
+    color: #ff6600;
+    text-shadow: 0 0 18px rgba(255, 102, 0, 0.7);
+}
+
+@keyframes scoreFloat {
+    0% {
+        transform: translate(-50%, 0) scale(0.5);
+        opacity: 0;
+    }
+    15% {
+        transform: translate(-50%, -5px) scale(1.2);
+        opacity: 1;
+    }
+    30% {
+        transform: translate(-50%, -10px) scale(1);
+    }
+    100% {
+        transform: translate(-50%, -60px);
+        opacity: 0;
+    }
+}
+
+/* ========== MISS EFFECT ========== */
+.miss-effect {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    z-index: 15;
+}
+
+.miss-effect::before,
+.miss-effect::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 50, 50, 0.6);
+    top: 50%;
+    left: 0;
+    box-shadow: 0 0 6px rgba(255, 50, 50, 0.4);
+}
+
+.miss-effect::before {
+    transform: rotate(45deg);
+}
+
+.miss-effect::after {
+    transform: rotate(-45deg);
+}
+
+.miss-effect {
+    animation: missAppear 0.5s ease-out forwards;
+}
+
+@keyframes missAppear {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+/* ========== CROSSHAIR ========== */
+#crosshair {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    transition: width 0.08s, height 0.08s;
+}
+
+.ch-h, .ch-v {
+    position: absolute;
+    background: rgba(255, 60, 60, 0.9);
+    box-shadow: 0 0 4px rgba(255, 60, 60, 0.6);
+}
+
+.ch-h {
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.ch-v {
+    width: 2px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.ch-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ff3c3c;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(255, 60, 60, 0.8);
+}
+
+/* Crosshair click feedback */
+#crosshair.firing .ch-h,
+#crosshair.firing .ch-v {
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+#crosshair.firing .ch-dot {
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+/* ========== OVERLAYS ========== */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(8, 8, 16, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.overlay.hidden {
+    display: none;
+}
+
+.overlay-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+}
+
+/* Start Screen */
+.game-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 52px;
+    font-weight: 900;
+    color: #ff3c3c;
+    line-height: 1.1;
+    letter-spacing: 6px;
+    text-shadow:
+        0 0 30px rgba(255, 60, 60, 0.4),
+        0 0 60px rgba(255, 60, 60, 0.2);
+    margin-bottom: 16px;
+}
+
+.game-subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 16px;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.instructions {
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.instruction-icon {
+    font-size: 20px;
+    width: 30px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Buttons */
+.btn-primary {
+    font-family: 'Orbitron', monospace;
+    padding: 16px 56px;
+    font-size: 16px;
+    font-weight: 700;
+    background: transparent;
+    color: #ff3c3c;
+    border: 2px solid rgba(255, 60, 60, 0.6);
+    cursor: pointer;
+    letter-spacing: 4px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 60, 60, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-primary:hover {
+    background: rgba(255, 60, 60, 0.15);
+    border-color: #ff3c3c;
+    box-shadow:
+        0 0 25px rgba(255, 60, 60, 0.3),
+        inset 0 0 25px rgba(255, 60, 60, 0.05);
+    color: #ff6060;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+/* Countdown */
+.countdown-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 120px;
+    font-weight: 900;
+    color: #ff3c3c;
+    text-shadow:
+        0 0 40px rgba(255, 60, 60, 0.5),
+        0 0 80px rgba(255, 60, 60, 0.3);
+    animation: countdownPop 0.8s ease-out;
+}
+
+@keyframes countdownPop {
+    0% {
+        transform: scale(2);
+        opacity: 0;
+    }
+    30% {
+        transform: scale(0.9);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+/* End Screen */
+.end-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: #ff3c3c;
+    letter-spacing: 5px;
+    text-shadow: 0 0 25px rgba(255, 60, 60, 0.4);
+    margin-bottom: 30px;
+}
+
+#final-stats {
+    margin-bottom: 36px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.stat-highlight {
+    font-size: 28px;
+    color: #ffaa00;
+    text-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+}
+
+.stat-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 10px 0;
+}
+
+/* ========== ROUND FLASH ========== */
+.round-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 5;
+    border: 2px solid rgba(255, 60, 60, 0.15);
+    animation: flashBorder 0.4s ease-out forwards;
+}
+
+@keyframes flashBorder {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+    .game-title {
+        font-size: 36px;
+        letter-spacing: 3px;
+    }
+
+    #hud {
+        padding: 0 16px;
+        height: 56px;
+    }
+
+    .hud-value {
+        font-size: 20px;
+    }
+
+    .btn-primary {
+        padding: 14px 36px;
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+}
