@@ -4,7 +4,7 @@
 
 // ─── Configuration ───────────────────────────────────────────
 const CONFIG = {
-    gameDuration: 60,                   // seconds
+    gameDuration: 30,                   // seconds
     roundSpawnInterval: [3000, 5500],   // ms between round spawns
     firstRoundDelay: 800,               // ms before first round
     spawnPadding: 110,                  // px from area edges
